@@ -1,1 +1,1 @@
-from .quiz import *
+from src.quiz.quiz import *

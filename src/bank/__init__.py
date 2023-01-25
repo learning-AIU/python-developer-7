@@ -1,1 +1,1 @@
-from .bank import *
+from src.bank.bank import *

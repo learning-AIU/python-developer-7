@@ -30,7 +30,7 @@ def main():
             utils.list_dir(only_dirs=True)
 
         elif choice is utils.MainMenu.DIR_F:
-            utils.list_dir(only_utils=True)
+            utils.list_dir(only_files=True)
 
         elif choice is utils.MainMenu.CD:
             utils.change_cwd()
