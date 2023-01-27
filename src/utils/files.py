@@ -6,7 +6,7 @@
 from shutil import rmtree, copytree, copy2
 
 # импорт объектов из текущего пакета
-from src.utils import data
+from src import utils
 
 
 __all__ = [
@@ -18,14 +18,17 @@ __all__ = [
 ]
 
 
+datafile = utils.DATA_DIR / 'production/listdir.txt'
+
+
 def create_dir() -> None:
-    dir_name = input(data.MESSAGES['ASK_DIR_NAME'])
-    (data.CWD / dir_name).mkdir(exist_ok=True)
+    dir_name = input(utils.MESSAGES['ASK_DIR_NAME'])
+    (utils.CWD / dir_name).mkdir(exist_ok=True)
 
 
 def delete_file_or_dir() -> None:
-    file_or_dir_name = input(data.MESSAGES['ASK_FILE_OR_DIR_NAME'])
-    path = data.CWD / file_or_dir_name
+    file_or_dir_name = input(utils.MESSAGES['ASK_FILE_OR_DIR_NAME'])
+    path = utils.CWD / file_or_dir_name
     if path.is_dir():
         rmtree(path, ignore_errors=True)
     elif path.is_file():
@@ -33,10 +36,10 @@ def delete_file_or_dir() -> None:
 
 
 def copy_file_or_dir() -> None:
-    file_or_dir_name = input(data.MESSAGES['ASK_FILE_OR_DIR_NAME'])
-    source = data.CWD / file_or_dir_name
-    target_name = input(data.MESSAGES['ASK_TARGET_NAME'])
-    target = data.CWD / target_name
+    file_or_dir_name = input(utils.MESSAGES['ASK_FILE_OR_DIR_NAME'])
+    source = utils.CWD / file_or_dir_name
+    target_name = input(utils.MESSAGES['ASK_TARGET_NAME'])
+    target = utils.CWD / target_name
     if source.is_dir():
         copytree(source, target)
     elif source.is_file():
@@ -45,22 +48,33 @@ def copy_file_or_dir() -> None:
 
 def list_dir(*, only_files: bool = False, only_dirs: bool = False) -> None:
     print()
-    for item in data.CWD.iterdir():
-        if not only_files ^ only_dirs:
-            print(item.name)
-        elif only_files and item.is_file():
-            print(item.name)
-        elif only_dirs and item.is_dir():
-            print(item.name)
+    files, dirs = [], []
+    for item in utils.CWD.iterdir():
+        if item.is_file():
+            files += [item.name]
+        elif item.is_dir():
+            dirs += [item.name]
+    buffer = ''
+    if not only_files ^ only_dirs:
+        print(*dirs, *files, sep='\n')
+        buffer += ('files: ' + ', '.join(files) +
+                   '\ndirs: ' + ', '.join(dirs))
+    elif only_files:
+        print(*files, sep='\n')
+        buffer += 'files: ' + ', '.join(files)
+    elif only_dirs:
+        print(*dirs, sep='\n')
+        buffer += 'dirs: ' + ', '.join(dirs)
+    datafile.write_text(buffer, encoding='utf-8')
 
 
 def change_cwd() -> None:
-    new_path = data.Path(input(data.MESSAGES['ASK_PATH']))
+    new_path = utils.Path(input(utils.MESSAGES['ASK_PATH']))
     if new_path.is_dir():
         if new_path.is_absolute():
-            data.CWD = new_path
+            utils.CWD = new_path
         else:
-            data.CWD = data.SOURCE_DIR / new_path
+            utils.CWD = utils.SOURCE_DIR / new_path
     else:
-        print(data.ERROR_MESSAGES['DIR_NOT_FOUND'])
+        print(utils.ERROR_MESSAGES['DIR_NOT_FOUND'])
 
