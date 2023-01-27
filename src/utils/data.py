@@ -8,7 +8,9 @@ from datetime import datetime as dt
 from pathlib import Path
 
 
-SOURCE_DIR = Path.cwd()
+PROJECT_ROOT = Path.cwd().parent
+SOURCE_DIR = PROJECT_ROOT / 'src'
+DATA_DIR = PROJECT_ROOT / 'data'
 CWD = SOURCE_DIR
 
 TITLE = "Консольный файловый менеджер"
